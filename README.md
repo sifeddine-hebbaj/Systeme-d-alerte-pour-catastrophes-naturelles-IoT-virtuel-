@@ -104,30 +104,30 @@ Le fichier `alert_sender.py` contient actuellement des identifiants SMTP en clai
 ### Schéma d'architecture
 ```mermaid
 flowchart LR
-	subgraph Local
-		Capteur[capteur.py\n(Simulateur de capteurs)]
-		Alert[alert_sender.py\n(Envoi d'alertes)]
-		Broker((MQTT Broker\nlocalhost:1883))
-	end
+    subgraph Local
+        Capteur["capteur.py<br/> (Simulateur de capteurs)"]
+        Alert["alert_sender.py<br/> (Envoi d'alertes)"]
+        Broker(("MQTT Broker<br/>localhost:1883"))
+    end
 
-	subgraph DockerCompose[Services containerisés]
-		direction TB
-		NodeRED[Node-RED]
-		Influx[InfluxDB]
-		Grafana[Grafana]
-	end
+    subgraph DockerCompose[Services containerisés]
+        direction TB
+        NodeRED[Node-RED]
+        Influx[InfluxDB]
+        Grafana[Grafana]
+    end
 
-	Capteur -->|publish MQTT| Broker
-	Broker -->|deliver| Alert
-	Broker -->|deliver| NodeRED
-	NodeRED -->|write| Influx
-	NodeRED -->|visualisation| Grafana
-	Influx -->|datasource| Grafana
-	Alert -->|SMTP| SMTP[Serveur SMTP]
+    Capteur -->|publish MQTT| Broker
+    Broker -->|deliver| Alert
+    Broker -->|deliver| NodeRED
+    NodeRED -->|write| Influx
+    NodeRED -->|visualisation| Grafana
+    Influx -->|datasource| Grafana
+    Alert -->|SMTP| SMTP[Serveur SMTP]
 
-	click NodeRED "http://127.0.0.1:1880/" "Node-RED"
-	click Grafana "http://localhost:3000/" "Grafana"
-	click Influx "http://localhost:8086/" "InfluxDB"
+    click NodeRED "http://127.0.0.1:1880/" "Node-RED"
+    click Grafana "http://localhost:3000/" "Grafana"
+    click Influx "http://localhost:8086/" "InfluxDB"
 ```
 
 Ce schéma montre le flux principal : les simulateurs publient des messages MQTT, le broker les distribue à Node-RED (traitement + stockage) et à `alert_sender.py` (notifications). Grafana et InfluxDB sont utilisés pour la visualisation et le stockage.
