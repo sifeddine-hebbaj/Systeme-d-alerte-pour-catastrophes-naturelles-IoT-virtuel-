@@ -1,0 +1,6 @@
+{
+  "dependencies": {
+    "node-red-contrib-influxdb": "^0.7.0",
+    "node-red-dashboard": "^3.6.6"
+  }
+}

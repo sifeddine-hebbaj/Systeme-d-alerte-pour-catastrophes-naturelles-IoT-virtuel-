@@ -1,0 +1,10 @@
+Grafana : http://localhost:3000/
+node-red: http://127.0.0.1:1880/
+influxdb: http://localhost:8086/
+mqqt: "C:\Program Files\mosquitto\mosquitto_sub.exe" -h localhost -t "sensors/#"
+
+
+
+python capteur.py
+node-red
+python alert_sender.py
