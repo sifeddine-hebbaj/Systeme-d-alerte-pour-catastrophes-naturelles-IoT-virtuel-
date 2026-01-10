@@ -4,11 +4,11 @@ from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
 
 # SMTP Email config
-EMAIL_FROM = ""
-EMAIL_TO = ""
+EMAIL_FROM = "sifeddine.hebbaj12@gmail.com"
+EMAIL_TO = "sifeddine.hebbaj12@gmail.com"
 SMTP_SERVER = "smtp.gmail.com"
 SMTP_PORT = 465
-EMAIL_PASSWORD = ""
+EMAIL_PASSWORD = "hgyp rtag flgs enpi"
 
 def send_email(alert_type, value, recommendation, color="#FF0000"):
     """

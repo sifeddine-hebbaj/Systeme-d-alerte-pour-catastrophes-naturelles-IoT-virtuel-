@@ -178,7 +178,8 @@
         "y": 200,
         "wires": [
             [
-                "225e42c94e9b167d"
+                "225e42c94e9b167d",
+                "584a544d9feccfae"
             ]
         ]
     },
@@ -224,7 +225,8 @@
         "y": 400,
         "wires": [
             [
-                "f94501e4366f3222"
+                "f94501e4366f3222",
+                "ada80997197ca0b8"
             ]
         ]
     },
@@ -270,7 +272,8 @@
         "y": 620,
         "wires": [
             [
-                "e34ccd70e552f78e"
+                "e34ccd70e552f78e",
+                "6493004f5a12d688"
             ]
         ]
     },
@@ -289,7 +292,7 @@
         "className": "alert-red",
         "topic": "msg.topic",
         "name": "Water",
-        "x": 1170,
+        "x": 1250,
         "y": 200,
         "wires": [],
         "info": "# Water Level Alert"
@@ -299,18 +302,18 @@
         "type": "function",
         "z": "b71dc3bc831b2fa1",
         "name": "function 4",
-        "func": "// get last sent timestamp\nlet lastSent = context.get('lastSent') || 0;\nlet now = Date.now();\n\n// limiter message every 6 seconds\nif (now - lastSent > 6000) { // 6000 ms = 6 sec\n    context.set('lastSent', now);\n    msg.topic = \"Alert\";\n    msg.payload = \"Alert water\";\n    msg.className = \"red\";\n    return msg;\n}\n\nreturn null; // ignore message\n",
+        "func": "let dataPoints = msg.payload[0].data[0];\nlet lastPoint = dataPoints[dataPoints.length - 1];\nif (!lastPoint || typeof lastPoint.y !== \"number\") return null;\n\nlet value = lastPoint.y;\nlet lastSent = context.get('lastSent') || 0;\nlet now = Date.now();\n\nif (value > 80 && (now - lastSent > 5000)) {\n  context.set('lastSent', now);\n\n  let level = \"\", recommendation = \"\", color = \"\";\n  if (value > 95) {\n    level = \"CRITICAL\"; color = \"#c0392b\";\n    recommendation = \"🚨 Evacuate immediately and contact emergency services.\";\n  } else if (value > 85) {\n    level = \"HIGH\"; color = \"#e67e22\";\n    recommendation = \"⚠️ Prepare for flooding and monitor closely.\";\n  } else {\n    level = \"WARNING\"; color = \"#f1c40f\";\n    recommendation = \"ℹ️ Stay alert and keep monitoring.\";\n  }\n\n  msg.topic = \"Water Level Alert - \" + level;\n\n  // ✅ HTML as string\n  msg.payload = `\n<div style=\"font-family:Arial; background:#f4f6f7; padding:20px;\">\n  <div style=\"max-width:600px;margin:auto;background:white;padding:20px;border-radius:8px;\">\n    <h2 style=\"color:${color};text-align:center;\">🚨 Water Level Alert</h2>\n    <p><b>Level:</b> <span style=\"color:${color};\">${level}</span></p>\n    <p><b>Value:</b> ${value.toFixed(2)}</p>\n    <div style=\"background:#fdf2e9;padding:10px;border-left:5px solid ${color};\">\n      ${recommendation}\n    </div>\n    <p style=\"font-size:12px;color:gray;text-align:center;\">\n      IoT Flood Alert System\n    </p>\n  </div>\n</div>\n`;\n\n  return msg;\n}\n\nreturn null;\n",
         "outputs": 1,
         "timeout": 0,
         "noerr": 0,
         "initialize": "",
         "finalize": "",
         "libs": [],
-        "x": 1020,
-        "y": 200,
+        "x": 1040,
+        "y": 100,
         "wires": [
             [
-                "f6cfdde1013d400c"
+                "ffb31850520d3386"
             ]
         ]
     },
@@ -319,18 +322,18 @@
         "type": "function",
         "z": "b71dc3bc831b2fa1",
         "name": "function 5",
-        "func": "// get last sent timestamp\nlet lastSent = context.get('lastSent') || 0;\nlet now = Date.now();\n\n// limiter message every 6 seconds\nif (now - lastSent > 8000) { // 6000 ms = 6 sec\n    context.set('lastSent', now);\n    msg.topic = \"Alert\";\n    msg.payload = \"Alert Flood\";\n    msg.className = \"red\";\n    return msg;\n}\n\nreturn null; // ignore message\n",
+        "func": "let dataPoints = msg.payload[0].data[0];\nlet lastPoint = dataPoints[dataPoints.length - 1];\n\n// value from last data point\nlet value = lastPoint.y;\nif (typeof value !== \"number\") return null; // safety check\n\n// limiter: 8 seconds\nlet lastSent = context.get('lastSentFlood') || 0;\nlet now = Date.now();\n\nif (value > 40 && (now - lastSent > 8000)) { // >40, every 8s max\n  context.set('lastSentFlood', now);\n\n  let level = \"\";\n  let recommendation = \"\";\n  let color = \"\";\n\n  if (value > 60) {\n    level = \"CRITICAL\";\n    color = \"#c0392b\";\n    recommendation = \"🚨 Flood level critical! Evacuate immediately!\";\n  } else if (value > 50) {\n    level = \"HIGH\";\n    color = \"#e67e22\";\n    recommendation = \"⚠️ High flood level! Prepare and monitor closely.\";\n  } else {\n    level = \"WARNING\";\n    color = \"#f1c40f\";\n    recommendation = \"ℹ️ Flood warning. Stay alert.\";\n  }\n\n  msg.topic = \"Flood Alert - \" + level;\n\n  // HTML email as string\n  msg.payload = `\n<div style=\"font-family:Arial; background:#f4f6f7; padding:20px;\">\n  <div style=\"max-width:600px;margin:auto;background:white;padding:20px;border-radius:8px;\">\n    <h2 style=\"color:${color}; text-align:center;\">🚨 Flood Alert</h2>\n    <p><b>Level:</b> <span style=\"color:${color};\">${level}</span></p>\n    <p><b>Measured Flood Value:</b> ${value.toFixed(2)}</p>\n    <div style=\"background:#fdf2e9;padding:10px;border-left:5px solid ${color};\">\n      ${recommendation}\n    </div>\n    <p style=\"font-size:12px;color:gray;text-align:center;\">\n      IoT Flood Alert System\n    </p>\n  </div>\n</div>\n`;\n\n  return msg;\n}\n\nreturn null;\n",
         "outputs": 1,
         "timeout": 0,
         "noerr": 0,
         "initialize": "",
         "finalize": "",
         "libs": [],
-        "x": 1080,
-        "y": 400,
+        "x": 1040,
+        "y": 320,
         "wires": [
             [
-                "604cbdddd663a1cd"
+                "6144ccfaa3360475"
             ]
         ]
     },
@@ -359,18 +362,18 @@
         "type": "function",
         "z": "b71dc3bc831b2fa1",
         "name": "function 6",
-        "func": "// get last sent timestamp\nlet lastSent = context.get('lastSent') || 0;\nlet now = Date.now();\n\n// limiter message every 6 seconds\nif (now - lastSent > 7000) { // 6000 ms = 6 sec\n    context.set('lastSent', now);\n    msg.topic = \"Alert\";\n    msg.payload = \"Alert Fire\";\n    msg.className = \"red\";\n    return msg;\n}\n\nreturn null; // ignore message\n",
+        "func": "let dataPoints = msg.payload[0].data[0];\nlet lastPoint = dataPoints[dataPoints.length - 1];\n\n// value from last data point\nlet value = lastPoint.y;\nif (typeof value !== \"number\") return null; // safety check\n\n// limiter: 7 seconds\nlet lastSentFire = context.get('lastSentFire') || 0;\nlet now = Date.now();\n\nif (value >= 1 && (now - lastSentFire > 7000)) { // fire detected\n    context.set('lastSentFire', now);\n\n    let level = \"\";\n    let recommendation = \"\";\n    let color = \"\";\n\n    if (value >= 5) {\n        level = \"CRITICAL\";\n        color = \"#c0392b\";\n        recommendation = \"🔥 Fire detected! Evacuate immediately and call emergency services!\";\n    } else {\n        level = \"WARNING\";\n        color = \"#e67e22\";\n        recommendation = \"⚠️ Fire detected! Stay alert and monitor the situation.\";\n    }\n\n    msg.topic = \"Fire Alert - \" + level;\n\n    // HTML email as string\n    msg.payload = `\n<div style=\"font-family:Arial; background:#f4f6f7; padding:20px;\">\n  <div style=\"max-width:600px;margin:auto;background:white;padding:20px;border-radius:8px;\">\n    <h2 style=\"color:${color}; text-align:center;\">🔥 Fire Alert</h2>\n    <p><b>Level:</b> <span style=\"color:${color};\">${level}</span></p>\n    <p><b>Fire Value:</b> ${value.toFixed(2)}</p>\n    <div style=\"background:#fdf2e9;padding:10px;border-left:5px solid ${color};\">\n      ${recommendation}\n    </div>\n    <p style=\"font-size:12px;color:gray;text-align:center;\">\n      IoT Fire Alert System\n    </p>\n  </div>\n</div>\n`;\n\n    return msg;\n}\n\nreturn null;\n",
         "outputs": 1,
         "timeout": 0,
         "noerr": 0,
         "initialize": "",
         "finalize": "",
         "libs": [],
-        "x": 1020,
-        "y": 620,
+        "x": 1000,
+        "y": 520,
         "wires": [
             [
-                "767190fe7a33080d"
+                "57e923a44025d5fb"
             ]
         ]
     },
@@ -515,6 +518,117 @@
         "wires": []
     },
     {
+        "id": "ffb31850520d3386",
+        "type": "e-mail",
+        "z": "b71dc3bc831b2fa1",
+        "server": "smtp.gmail.com",
+        "port": "465",
+        "authtype": "BASIC",
+        "saslformat": true,
+        "token": "oauth2Response.access_token",
+        "secure": true,
+        "tls": false,
+        "name": "sifeddine.hebbaj@um5r.ac.ma",
+        "dname": "Gmail Alert",
+        "x": 1210,
+        "y": 100,
+        "wires": []
+    },
+    {
+        "id": "6144ccfaa3360475",
+        "type": "e-mail",
+        "z": "b71dc3bc831b2fa1",
+        "server": "smtp.gmail.com",
+        "port": "465",
+        "authtype": "BASIC",
+        "saslformat": true,
+        "token": "oauth2Response.access_token",
+        "secure": true,
+        "tls": false,
+        "name": "sifeddine.hebbaj@um5r.ac.ma",
+        "dname": "Gmail Alert",
+        "x": 1250,
+        "y": 320,
+        "wires": []
+    },
+    {
+        "id": "57e923a44025d5fb",
+        "type": "e-mail",
+        "z": "b71dc3bc831b2fa1",
+        "server": "smtp.gmail.com",
+        "port": "465",
+        "authtype": "BASIC",
+        "saslformat": true,
+        "token": "oauth2Response.access_token",
+        "secure": true,
+        "tls": false,
+        "name": "sifeddine.hebbaj@um5r.ac.ma",
+        "dname": "Gmail Alert",
+        "x": 1250,
+        "y": 520,
+        "wires": []
+    },
+    {
+        "id": "584a544d9feccfae",
+        "type": "function",
+        "z": "b71dc3bc831b2fa1",
+        "name": "function 7",
+        "func": "let value = Number(msg.payload); \nif (isNaN(value)) { return null; } \nlet lastSent = context.get('lastSent') || 0; \nlet now = Date.now(); \nif (value > 80 && (now - lastSent > 5000)) \n{ // 5000 ms = 5 sec \ncontext.set('lastSent', now); \nmsg.topic = \"Alert\"; \nmsg.payload = \"⚠️ Water level is high: \" + value; \nmsg.className = \"red\"; \nreturn msg; \n} \nreturn null;",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 1020,
+        "y": 200,
+        "wires": [
+            [
+                "f6cfdde1013d400c"
+            ]
+        ]
+    },
+    {
+        "id": "ada80997197ca0b8",
+        "type": "function",
+        "z": "b71dc3bc831b2fa1",
+        "name": "function 8",
+        "func": "// get last sent timestamp \nlet lastSent = context.get('lastSent') || 0; \nlet now = Date.now(); \n// limiter message every 6 seconds \nif (now - lastSent > 7000) { \n  // 6000 ms = 6 sec \n  context.set('lastSent', now); \n  msg.topic = \"Alert\"; \n  msg.payload = \"Alert Flood\"; \n  msg.className = \"red\"; \n  return msg; }\n   return null; // ignore message",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 1060,
+        "y": 400,
+        "wires": [
+            [
+                "604cbdddd663a1cd"
+            ]
+        ]
+    },
+    {
+        "id": "6493004f5a12d688",
+        "type": "function",
+        "z": "b71dc3bc831b2fa1",
+        "name": "function 9",
+        "func": "// get last sent timestamp \nlet lastSent = context.get('lastSent') || 0; \nlet now = Date.now(); \n// limiter message every 6 seconds \nif (now - lastSent > 7000) { \n  // 6000 ms = 6 sec \n  context.set('lastSent', now); \n  msg.topic = \"Alert\"; \n  msg.payload = \"Alert Fire\"; \n  msg.className = \"red\"; \n  return msg; }\n   return null; // ignore message",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 1000,
+        "y": 620,
+        "wires": [
+            [
+                "767190fe7a33080d"
+            ]
+        ]
+    },
+    {
         "id": "710fdbf3b04e2537",
         "type": "mqtt-broker",
         "name": "",
@@ -580,12 +694,13 @@
         "hidden": false
     },
     {
-        "id": "4a41ec3b54c9b4db",
+        "id": "7dcece874d27aba8",
         "type": "global-config",
         "env": [],
         "modules": {
             "node-red-dashboard": "3.6.6",
-            "node-red-contrib-influxdb": "0.7.0"
+            "node-red-contrib-influxdb": "0.7.0",
+            "node-red-node-email": "5.0.4"
         }
     }
 ]
