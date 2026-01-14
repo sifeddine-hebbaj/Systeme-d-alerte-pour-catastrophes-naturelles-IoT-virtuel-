@@ -3,7 +3,11 @@
 Année universitaire 2025–2026
 
 ## 1. Description
-Ce projet implémente un système IoT virtuel d'alerte pour catastrophes naturelles. Il simule des capteurs environnementaux (niveau d'eau, inondation, détection d'incendie), publie les mesures via MQTT, traite les flux avec Node-RED, stocke les séries temporelles dans InfluxDB et visualise les données avec Grafana. Un composant Python envoie des emails d'alerte lorsque des seuils critiques sont dépassés.
+Ce projet consiste à concevoir et implémenter un système IoT virtuel d’alerte pour catastrophes naturelles.
+Il simule des capteurs environnementaux (niveau d’eau, niveau d’inondation et détection d’incendie) et met en place une chaîne complète de collecte, traitement, stockage, visualisation et notification des données.
+
+Les mesures sont publiées via le protocole MQTT, traitées en temps réel avec Node-RED, stockées sous forme de séries temporelles dans InfluxDB, puis visualisées à l’aide de Grafana.
+Un composant dédié permet l’envoi automatique d’alertes par email lorsqu’un seuil critique est dépassé.
 
 ## 2. Objectifs
 - Simuler des capteurs et publier des données via MQTT.
@@ -34,20 +38,6 @@ Ce projet implémente un système IoT virtuel d'alerte pour catastrophes naturel
 - Python 3.8+ et `paho-mqtt` (si vous exécutez les scripts localement).
 - Un broker MQTT (Mosquitto). Si vous utilisez Docker Compose, Node-RED peut se connecter à un broker externe ; les scripts actuels supposent `localhost:1883`.
 
-Installer la dépendance Python :
-
-```bash
-pip install paho-mqtt
-```
-
-Si vous n'avez pas Mosquitto, installez-le :
-
-Windows (choco) :
-
-```powershell
-choco install mosquitto
-# puis démarrer le service ou exécuter mosquitto en standalone
-```
 
 ## 6. Lancer les services (Docker Compose)
 Les services InfluxDB, Grafana et Node-RED sont fournis dans `docker-compose.yaml`.
@@ -84,7 +74,7 @@ Note: les scripts se connectent à `localhost:1883` et utilisent des topics MQTT
 - `sensors/fire` : alerte si payload == 1
 
 ## 10. Configuration des emails et sécurité
-node red `email` contient actuellement des identifiants SMTP en clair (pour tests).
+Les identifiants SMTP sont actuellement stockés en clair dans le flow Node-RED, uniquement à des fins de test.
 
 
 ## 11. Dépannage rapide
