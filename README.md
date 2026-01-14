@@ -14,16 +14,16 @@ Ce projet implémente un système IoT virtuel d'alerte pour catastrophes naturel
 
 ## 3. Architecture (vue d'ensemble)
 
-- Capteurs simulés: `capteur.py` (publie sur topics MQTT `sensors/waterlevel`, `sensors/floodlevel`, `sensors/fire`).
+- Capteurs simulés: `ESP32 (DHT32)` (publie sur topics MQTT `sensors/waterlevel`, `sensors/floodlevel`, `sensors/fire`).
 - Broker MQTT: instance locale (`mosquitto`) attendue sur `localhost:1883`.
 - Traitement: Node-RED (flow fourni dans `nodes_red.json`).
 - Stockage: InfluxDB (configuration dans `docker-compose.yaml`).
 - Visualisation: Grafana (exposée sur le port 3000).
-- Alertes: `alert_sender.py` (s'abonne aux topics et envoie des emails HTML).
+- Alertes: `node email` (s'abonne aux topics et envoie des emails HTML).
 
 ## 4. Contenu du dépôt
-- `capteur.py` : simulateur de capteurs en Python.
-- `alert_sender.py` : service d'envoi d'alerte par email (via SMTP).
+- `ESP32` : simulateur de capteurs en Python.
+- `node-red(email)` : service d'envoi d'alerte par email (via SMTP).
 - `nodes_red.json` : export du flow Node-RED à importer.
 - `docker-compose.yaml` : compose pour InfluxDB, Grafana et Node-RED.
 - `config.txt` : notes, commandes utiles.
@@ -78,18 +78,18 @@ Note: les scripts se connectent à `localhost:1883` et utilisent des topics MQTT
 - Le flow contient des conversions de payload, des charts pour le dashboard, et des fonctions qui limitent la fréquence d'affichage des toasts d'alerte.
 - Pour écrire dans InfluxDB depuis Node-RED, configurez le node `influxdb` avec l'URL `http://influxdb:8086` (si Node-RED est conteneurisé) ou `http://localhost:8086` selon votre configuration, et utilisez le token `mysecrettoken123` ou un token approprié.
 
-## 9. Seuils d'alerte (valeurs par défaut dans `alert_sender.py`)
+## 9. Seuils d'alerte (valeurs par défaut dans `node email`)
 - `sensors/waterlevel` : alerte si valeur > 80 (cm)
 - `sensors/floodlevel` : alerte si valeur > 40 (cm)
 - `sensors/fire` : alerte si payload == 1
 
 ## 10. Configuration des emails et sécurité
-Le fichier `alert_sender.py` contient actuellement des identifiants SMTP en clair (pour tests).
+node red `email` contient actuellement des identifiants SMTP en clair (pour tests).
 
 
 ## 11. Dépannage rapide
 - Si Node-RED ne se connecte pas à InfluxDB : vérifiez l'URL, le token et la connectivité réseau entre conteneurs.
-- Si aucun message MQTT n'arrive : vérifiez que Mosquitto fonctionne et que `capteur.py` publie sur les bons topics.
+- Si aucun message MQTT n'arrive : vérifiez que Mosquitto fonctionne et que `ESP32` publie sur les bons topics.
 - Si les emails ne partent pas : vérifiez les paramètres SMTP, le port, et que le mot de passe d'application (pour Gmail) est utilisé.
 
 ## 12. Schémas et diagrammes
@@ -98,8 +98,8 @@ Le fichier `alert_sender.py` contient actuellement des identifiants SMTP en clai
 ```mermaid
 flowchart LR
     subgraph Local
-        Capteur["capteur.py<br/> (Simulateur de capteurs)"]
-        Alert["alert_sender.py<br/> (Envoi d'alertes)"]
+        Capteur["ESP32<br/> (Simulateur de capteurs)"]
+        Alert["node email<br/> (Envoi d'alertes)"]
         Broker(("MQTT Broker<br/>localhost:1883"))
     end
 
@@ -123,7 +123,7 @@ flowchart LR
     click Influx "http://localhost:8086/" "InfluxDB"
 ```
 
-Ce schéma montre le flux principal : les simulateurs publient des messages MQTT, le broker les distribue à Node-RED (traitement + stockage) et à `alert_sender.py` (notifications). Grafana et InfluxDB sont utilisés pour la visualisation et le stockage.
+Ce schéma montre le flux principal : les simulateurs publient des messages MQTT, le broker les distribue à Node-RED (traitement + stockage) et à `node-red(email)` (notifications). Grafana et InfluxDB sont utilisés pour la visualisation et le stockage.
 
 ### Diagramme de classes (conceptuel)
 ```mermaid
