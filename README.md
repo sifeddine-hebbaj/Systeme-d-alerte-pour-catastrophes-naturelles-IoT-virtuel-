@@ -88,7 +88,7 @@ Les identifiants SMTP sont actuellement stockés en clair dans le flow Node-RED,
 ```mermaid
 flowchart LR
     subgraph Local
-        Capteur["ESP32<br/>Capteur DHT22<br/>(Température & Humidité)"]
+        Capteur["ESP32<br/>Capteur DHT22<br/>"]
         Alert["Node-RED<br/>node email<br/>(Envoi d'alertes)"]
         Broker(("MQTT Broker<br/>localhost:1883"))
     end
@@ -118,39 +118,41 @@ Ce schéma montre le flux principal : les simulateurs publient des messages MQTT
 ### Diagramme de classes (conceptuel)
 ```mermaid
 classDiagram
-	class SensorSimulator {
-		+start()
-		+publish(topic, payload)
-		-broker
-		-interval
-	}
+    class ESP32_DHT22 {
+        +read_temperature()
+        +read_humidity()
+        +publish(topic, payload)
+        -broker
+        -interval
+    }
 
-	class AlertSender {
-		+on_message(topic, payload)
-		+send_email(alert_type, value, recommendation)
-		-smtp_config
-	}
+    class AlertSender {
+        +on_message(topic, payload)
+        +send_email(alert_type, value, recommendation)
+        -smtp_config
+    }
 
-	class MQTTClient {
-		+connect()
-		+subscribe(topic)
-		+publish(topic, payload)
-	}
+    class MQTTClient {
+        +connect()
+        +subscribe(topic)
+        +publish(topic, payload)
+    }
 
-	class NodeREDFlow {
-		+process_message(msg)
-		+write_influx(point)
-	}
+    class NodeREDFlow {
+        +process_message(msg)
+        +write_influx(point)
+    }
 
-	class InfluxDBService {
-		+write(bucket, point)
-		+query(q)
-	}
+    class InfluxDBService {
+        +write(bucket, point)
+        +query(q)
+    }
 
-	SensorSimulator --|> MQTTClient
-	AlertSender --|> MQTTClient
-	NodeREDFlow --|> MQTTClient
-	NodeREDFlow --> InfluxDBService
+    ESP32_DHT22 --|> MQTTClient
+    AlertSender --|> MQTTClient
+    NodeREDFlow --|> MQTTClient
+    NodeREDFlow --> InfluxDBService
+
 ```
 
 Ce diagramme est conceptuel et montre les responsabilités principales : `SensorSimulator` publie des messages via `MQTTClient`, `NodeREDFlow` consomme et stocke les données, et `AlertSender` gère la logique d'alerte et l'envoi d'emails.
