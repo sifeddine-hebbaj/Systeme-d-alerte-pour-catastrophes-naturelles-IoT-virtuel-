@@ -66,17 +66,10 @@ InfluxDB initial : utilisateur `admin`, mot de passe `admin123`, organisation `m
 ## 7. Exécuter les scripts localement (sans Docker)
 
 1) Démarrer un broker MQTT (Mosquitto) local sur le port 1883.
-2) Lancer le simulateur de capteurs :
+2) La simulation est réalisée sur la plateforme Wokwi en utilisant un ESP32 programmé en MicroPython avec le protocole MQTT.
+Le diagramme matériel (diagram.json) et le script (main.py) ont été copiés et exécutés dans Wokwi.
+<img width="478" height="479" alt="Screenshot_23" src="https://github.com/user-attachments/assets/e305aa7c-b1f7-4bfb-ac53-67617cf1fb1b" />
 
-```bash
-python capteur.py
-```
-
-3) Lancer le service d'alerte :
-
-```bash
-python alert_sender.py
-```
 
 Note: les scripts se connectent à `localhost:1883` et utilisent des topics MQTT listés ci-dessus.
 
