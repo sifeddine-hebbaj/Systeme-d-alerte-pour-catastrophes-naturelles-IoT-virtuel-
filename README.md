@@ -88,8 +88,8 @@ Les identifiants SMTP sont actuellement stockés en clair dans le flow Node-RED,
 ```mermaid
 flowchart LR
     subgraph Local
-        Capteur["ESP32<br/> (Simulateur de capteurs)"]
-        Alert["node email<br/> (Envoi d'alertes)"]
+        Capteur["ESP32<br/>Capteur DHT22<br/>(Température & Humidité)"]
+        Alert["Node-RED<br/>node email<br/>(Envoi d'alertes)"]
         Broker(("MQTT Broker<br/>localhost:1883"))
     end
 
