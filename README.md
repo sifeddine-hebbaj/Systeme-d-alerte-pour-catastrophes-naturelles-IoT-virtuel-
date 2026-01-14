@@ -20,7 +20,7 @@ Un composant dédié permet l’envoi automatique d’alertes par email lorsqu�
   <img width="1919" height="858" alt="Screenshot_27" src="https://github.com/user-attachments/assets/0d6ab1d6-cac7-4e0c-bd58-89a87c2410d2" />
 - Détecter automatiquement les situations critiques et notifier par email.
 <img width="972" height="379" alt="Screenshot_30" src="https://github.com/user-attachments/assets/d1a0fa76-c451-435f-923e-a985defdd4b0" width="800" />
-<img width="1064" height="378" alt="Screenshot_29" src="https://github.com/user-attachments/assets/ee665511-762d-4b3f-b0c4-10113f618dc8" width="800"/>
+<img width="1064" height="378" alt="Screenshot_29" src="https://github.com/user-attachments/assets/ee665511-762d-4b3f-b0c4-10113f618dc8" width="700"/>
 <img width="981" height="365" alt="Screenshot_31" src="https://github.com/user-attachments/assets/e6f130ad-f644-4a11-b899-4e6857cac4d2" width="800"/>
 
 
