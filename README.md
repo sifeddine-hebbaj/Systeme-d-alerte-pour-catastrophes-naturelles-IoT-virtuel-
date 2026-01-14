@@ -11,10 +11,18 @@ Un composant dédié permet l’envoi automatique d’alertes par email lorsqu�
 
 ## 2. Objectifs
 - Simuler des capteurs et publier des données via MQTT.
+  <img width="956" height="689" alt="Screenshot_28" src="https://github.com/user-attachments/assets/2837084e-b71c-4aab-a412-eb53c529a14d" />
 - Centraliser et traiter les flux avec Node-RED.
+  <img width="1739" height="798" alt="Screenshot_25" src="https://github.com/user-attachments/assets/90ecdc58-172d-4226-ac5d-33ba76c4b421" />
 - Stocker les mesures dans InfluxDB.
+  <img width="1919" height="881" alt="Screenshot_24" src="https://github.com/user-attachments/assets/eca032b2-dc5f-44ae-a1c9-09643cf1c584" />
 - Visualiser via Grafana.
+  <img width="1919" height="858" alt="Screenshot_27" src="https://github.com/user-attachments/assets/0d6ab1d6-cac7-4e0c-bd58-89a87c2410d2" />
 - Détecter automatiquement les situations critiques et notifier par email.
+<img width="972" height="379" alt="Screenshot_30" src="https://github.com/user-attachments/assets/d1a0fa76-c451-435f-923e-a985defdd4b0" />
+<img width="1064" height="378" alt="Screenshot_29" src="https://github.com/user-attachments/assets/ee665511-762d-4b3f-b0c4-10113f618dc8" />
+<img width="981" height="365" alt="Screenshot_31" src="https://github.com/user-attachments/assets/e6f130ad-f644-4a11-b899-4e6857cac4d2" />
+
 
 ## 3. Architecture (vue d'ensemble)
 
