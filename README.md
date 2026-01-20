@@ -26,7 +26,7 @@ Un composant dédié permet l’envoi automatique d’alertes par email lorsqu�
 
 ## 3. Architecture (vue d'ensemble)
 
-- Capteurs simulés: `ESP32 (DHT32)` (publie sur topics MQTT `sensors/waterlevel`, `sensors/floodlevel`, `sensors/fire`).
+- Capteurs simulés: `ESP32 (DHT22)` (publie sur topics MQTT `sensors/waterlevel`, `sensors/floodlevel`, `sensors/fire`).
 - Broker MQTT: instance locale (`mosquitto`) attendue sur `localhost:1883`.
 - Traitement: Node-RED (flow fourni dans `nodes_red.json`).
 - Stockage: InfluxDB (configuration dans `docker-compose.yaml`).
